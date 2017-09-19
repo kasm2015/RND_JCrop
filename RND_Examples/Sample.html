@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Hello World | Jcrop Demo</title>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+
+<script src="../js/jquery.min.js"></script>
+<script src="../js/jquery.Jcrop.js"></script>
+<script type="text/javascript">
+jQuery(function($){
+
+    // Create variables (in this scope) to hold the API and image size
+    var jcrop_api,
+    boundx,
+    boundy,
+
+    // Grab some information about the preview pane
+    $preview = $('#preview-pane'),
+    $pcnt = $('#preview-pane .preview-container'),
+    $pimg = $('#preview-pane .preview-container img'),
+
+    xsize = $pcnt.width(),
+    ysize = $pcnt.height();
+
+    $('#target').Jcrop({
+        onChange: updatePreview,
+        onSelect: updatePreview,
+        onRelease:  clearCoords,
+        bgFade:   false,
+        bgOpacity: 0.6,
+        bgColor:'black',
+        boundColor:'red',
+        setSelect: [ 10, 70, 250, 330 ]
+    },function(){
+        // Use the API to get the real image size
+        var bounds = this.getBounds();
+        boundx = bounds[0];
+        boundy = bounds[1];
+        // Store the API in the jcrop_api variable
+        jcrop_api = this;
+
+        // Move the preview into the jcrop container for css positioning
+        $preview.appendTo(jcrop_api.ui.holder);
+    });
+
+    function updatePreview(c)
+    {
+        console.log("C value : " +JSON.stringify(c));
+        $('#x1').val(c.x);
+        $('#y1').val(c.y);
+        $('#x2').val(c.x2);
+        $('#y2').val(c.y2);
+        $('#w').val(c.w);
+        $('#h').val(c.h);
+
+        if (parseInt(c.w) > 0)
+        {
+            var rx = xsize / c.w;
+            var ry = ysize / c.h;
+            $pimg.css({
+                marginLeft: '-' + c.x + 'px',
+                marginTop: '-' + c.y + 'px'
+            });
+        }
+        $(".preview-container").css({
+            width:c.w,
+            height:c.h
+        });
+    };
+
+});
+
+
+function clearCoords()
+{
+    $('#coords input').val('');
+};
+    
+</script>
+<link rel="stylesheet" href="demo_files/main.css" type="text/css" />
+<link rel="stylesheet" href="demo_files/demos.css" type="text/css" />
+<link rel="stylesheet" href="../css/jquery.Jcrop.css" type="text/css" />
+<style type="text/css">
+
+/* Apply these styles only when #preview-pane has
+   been placed within the Jcrop widget */
+.jcrop-holder #preview-pane {
+  display: block;
+  position: absolute;
+  z-index: 2000;
+  top: 10px;
+  right: -600px;
+  padding: 6px;
+  border: 1px rgba(0,0,0,.4) solid;
+  background-color: white;
+
+}
+
+/* The Javascript code will set the aspect ratio of the crop
+   area based on the size of the thumbnail preview,
+   specified here */
+#preview-pane .preview-container {
+   /* width: 250px;
+    height: 200px;*/
+    overflow: hidden;
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                <div class="jc-demo-box">
+                    
+                    <img src="Bank-Cheques/axis1.png" id="target" alt="Axis Bank Cheque1" />
+                    <!-- This is the form that our event handler fills -->
+                    
+                    <!-- This is the form that our event handler fills -->
+                    <form id="coords" class="coords" onsubmit="return false;" action="#">
+
+                        <div class="inline-labels">
+                            <label>X1 <input type="text" size="4" id="x1" name="x1" /></label>
+                            <label>Y1 <input type="text" size="4" id="y1" name="y1" /></label>
+                            <label>X2 <input type="text" size="4" id="x2" name="x2" /></label>
+                            <label>Y2 <input type="text" size="4" id="y2" name="y2" /></label>
+                            <label>W <input type="text" size="4" id="w" name="w" /></label>
+                            <label>H <input type="text" size="4" id="h" name="h" /></label>
+                        </div>
+                    </form>
+                    
+                    <div id="preview-pane">
+                        <div class="preview-container">
+                            <img src="Bank-Cheques/axis1.png" class="jcrop-preview" alt="Preview" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
